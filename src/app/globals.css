@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-green: #22C55E;
+    --color-green-hover: #16A34A;
+    --color-dark: #111111;
+    --color-card-dark: #1A1A1A;
+    --color-white: #FFFFFF;
+    --color-heading: #111827;
+    --color-body: #6B7280;
+    --color-muted: #9CA3AF;
+    --color-light-bg: #F3F4F6;
+    --color-card-light: #F9FAFB;
+    --color-border: #E5E7EB;
+    --color-red: #EF4444;
+    --color-divider-dark: #1F2937;
+    --color-bullet: #E5E7EB;
+    --color-card-body: #D1D5DB;
+
+    --background: 0 0% 100%;
+    --foreground: 220 13% 11%;
+    --card: 210 20% 98%;
+    --card-foreground: 220 13% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 11%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 13% 11%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 13% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 142 71% 45%;
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 210 20% 95%;
+    --card: 0 0% 10%;
+    --card-foreground: 210 20% 95%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 210 20% 95%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 218 11% 65%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 210 20% 95%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 20% 95%;
+    --border: 215 14% 17%;
+    --input: 215 14% 17%;
+    --ring: 142 71% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, #22C55E, #22C55E);
+  }
+  .gradient-bg {
+    background-color: #22C55E;
+  }
+  .gradient-bg:hover {
+    background-color: #16A34A;
+  }
+  .glass {
+    @apply bg-white/80 backdrop-blur-lg border border-gray-200;
+  }
+}
