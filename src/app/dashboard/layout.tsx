@@ -23,7 +23,6 @@ export default async function DashboardLayout({
     .single();
 
   return (
-    <div className="dark">
     <DashboardShell
       user={{
         id: user.id,
@@ -36,6 +35,5 @@ export default async function DashboardLayout({
     >
       {children}
     </DashboardShell>
-    </div>
   );
 }

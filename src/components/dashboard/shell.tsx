@@ -87,22 +87,22 @@ export function DashboardShell({
   );
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-white">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-card flex flex-col shrink-0">
-        <div className="p-4 border-b">
+      <aside className="w-64 border-r border-[#E5E7EB] bg-[#F9FAFB] flex flex-col shrink-0">
+        <div className="p-4 border-b border-[#E5E7EB]">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#22C55E] rounded-lg flex items-center justify-center">
               <Zap className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold">Shelf</span>
+            <span className="text-lg font-bold text-[#111827]">Shelf</span>
           </Link>
         </div>
 
         <nav className="flex-1 p-3 space-y-4 overflow-y-auto">
           {NAV_SECTIONS.map((section) => (
             <div key={section.label}>
-              <p className="px-3 mb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <p className="px-3 mb-1 text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">
                 {section.label}
               </p>
               <div className="space-y-0.5">
@@ -113,16 +113,17 @@ export function DashboardShell({
                       : pathname.startsWith(item.href);
                   return (
                     <Link key={item.href} href={item.href}>
-                      <Button
-                        variant="ghost"
+                      <button
                         className={cn(
-                          "w-full justify-start gap-3 h-9",
-                          isActive && "bg-accent text-accent-foreground"
+                          "w-full flex items-center gap-3 h-9 px-3 rounded-md text-sm font-medium transition-colors",
+                          isActive
+                            ? "bg-[#22C55E]/10 text-[#22C55E]"
+                            : "text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6]"
                         )}
                       >
                         <item.icon className="w-4 h-4" />
                         {item.label}
-                      </Button>
+                      </button>
                     </Link>
                   );
                 })}
@@ -132,48 +133,48 @@ export function DashboardShell({
         </nav>
 
         {/* Usage Card */}
-        <div className="p-4 border-t">
-          <div className="rounded-lg border p-3 space-y-3">
+        <div className="p-4 border-t border-[#E5E7EB]">
+          <div className="rounded-lg border border-[#E5E7EB] bg-white p-3 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Listings</span>
-              <Badge variant="secondary" className="text-xs capitalize">
+              <span className="text-sm font-medium text-[#111827]">Listings</span>
+              <span className="text-xs capitalize bg-[#F3F4F6] text-[#6B7280] px-2 py-0.5 rounded-full">
                 {user.plan}
-              </Badge>
+              </span>
             </div>
             <Progress value={usagePercent} />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[#9CA3AF]">
               {user.listingsUsed} / {user.listingsLimit} used this month
             </p>
             {user.plan === "free" && (
               <Link href="/dashboard/billing">
-                <Button size="sm" className="w-full gradient-bg border-0 text-xs">
+                <button className="w-full bg-[#22C55E] hover:bg-[#16A34A] text-white text-xs font-medium py-2 rounded-md flex items-center justify-center gap-1 transition-colors">
                   <Sparkles className="w-3 h-3" />
                   Upgrade Plan
-                </Button>
+                </button>
               </Link>
             )}
           </div>
         </div>
 
         {/* User */}
-        <div className="p-4 border-t">
+        <div className="p-4 border-t border-[#E5E7EB]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+            <div className="w-8 h-8 rounded-full bg-[#22C55E]/10 flex items-center justify-center text-sm font-medium text-[#22C55E]">
               {user.fullName?.[0] || user.email[0].toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user.fullName || "User"}</p>
-              <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+              <p className="text-sm font-medium text-[#111827] truncate">{user.fullName || "User"}</p>
+              <p className="text-xs text-[#9CA3AF] truncate">{user.email}</p>
             </div>
-            <Button variant="ghost" size="icon" onClick={handleLogout} title="Log out">
+            <button onClick={handleLogout} title="Log out" className="text-[#9CA3AF] hover:text-[#111827] p-1 transition-colors">
               <LogOut className="w-4 h-4" />
-            </Button>
+            </button>
           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-white">
         <div className="max-w-6xl mx-auto p-6 lg:p-8">{children}</div>
       </main>
     </div>
