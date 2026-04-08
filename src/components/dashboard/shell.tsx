@@ -45,47 +45,25 @@ interface DashboardUser {
 
 const NAV_SECTIONS = [
   {
-    label: "Command Center",
+    label: "Overview",
     items: [
-      { href: "/dashboard", label: "Sales Dashboard", icon: LayoutDashboard },
-      { href: "/dashboard/shelf-score", label: "Shelf Score", icon: Gauge },
-      { href: "/dashboard/alerts", label: "Alerts", icon: Bell },
-    ],
-  },
-  {
-    label: "Create & Publish",
-    items: [
-      { href: "/dashboard/generate", label: "Generate Listing", icon: PenTool },
-      { href: "/dashboard/bulk", label: "Bulk Upload", icon: Upload },
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/dashboard/generate", label: "Generate", icon: PenTool },
       { href: "/dashboard/publish", label: "Publish", icon: Send },
-      { href: "/dashboard/ab-tests", label: "A/B Testing", icon: FlaskConical },
     ],
   },
   {
-    label: "Intelligence",
-    items: [
-      { href: "/dashboard/health", label: "Listing Health", icon: HeartPulse },
-      { href: "/dashboard/keywords", label: "Keywords", icon: Search },
-      { href: "/dashboard/competitors", label: "Competitors", icon: Swords },
-      { href: "/dashboard/research", label: "Product Research", icon: Microscope },
-      { href: "/dashboard/reviews", label: "Reviews", icon: MessageSquare },
-    ],
-  },
-  {
-    label: "Operations",
+    label: "Manage",
     items: [
       { href: "/dashboard/inventory", label: "Inventory", icon: Package },
-      { href: "/dashboard/ads", label: "Ad Manager", icon: Megaphone },
-      { href: "/dashboard/pricing", label: "Pricing", icon: DollarSign },
+      { href: "/dashboard/reviews", label: "Reviews", icon: MessageSquare },
+      { href: "/dashboard/ads", label: "Ads", icon: Megaphone },
+      { href: "/dashboard/connections", label: "Connections", icon: Link2 },
     ],
   },
   {
-    label: "Brand & Settings",
+    label: "Account",
     items: [
-      { href: "/dashboard/brand-voice", label: "Brand Voice", icon: Mic2 },
-      { href: "/dashboard/brand-dna", label: "Brand DNA", icon: Dna },
-      { href: "/dashboard/connections", label: "Connections", icon: Link2 },
-      { href: "/dashboard/team", label: "Team", icon: Users },
       { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
       { href: "/dashboard/settings", label: "Settings", icon: Settings },
     ],
