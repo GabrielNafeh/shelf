@@ -17,32 +17,21 @@ import {
 import type { Marketplace } from "@/lib/types";
 
 function MarketplaceLogo({ marketplace }: { marketplace: Marketplace }) {
-  switch (marketplace) {
-    case "amazon":
-      return (
-        <div className="w-12 h-12 rounded-lg bg-[#232F3E] flex items-center justify-center">
-          <span className="text-[#FF9900] font-bold text-lg">a</span>
-        </div>
-      );
-    case "shopify":
-      return (
-        <div className="w-12 h-12 rounded-lg bg-[#96BF48] flex items-center justify-center">
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M15.34 3.8c-.04 0-.08.04-.12.04-.04 0-1.04.32-1.04.32-.2-.56-.52-1.08-1.12-1.08h-.08c-.32-.4-.72-.56-1.08-.56-2.68.04-3.96 3.36-4.36 5.08l-1.8.56c-.56.16-.56.2-.64.72C5.02 9.4 3.82 18.78 3.82 18.78L14.14 21l5.52-1.2S15.42 3.84 15.34 3.8zm-2.72 1.84v.2l-2.28.72c.44-1.68 1.28-2.52 2-2.72.12.44.24.96.28 1.8zm-1.2-2.36c.12 0 .28.04.4.16-.96.44-1.96 1.56-2.4 3.8l-1.8.56c.52-1.72 1.64-4.56 3.8-4.52zm.52 10.92s-.76-.4-1.68-.4c-1.36.08-1.36.96-1.36 1.16.08 1.2 3.24 1.48 3.4 4.32.16 2.24-1.16 3.76-3.08 3.88-2.28.12-3.56-1.2-3.56-1.2l.48-2.04s1.24.96 2.24.88c.68-.04.88-.56.88-.88-.08-1.56-2.68-1.48-2.84-4.08-.12-2.2 1.28-4.4 4.44-4.6 1.2-.08 1.84.24 1.84.24l-.76 2.72z"/></svg>
-        </div>
-      );
-    case "walmart":
-      return (
-        <div className="w-12 h-12 rounded-lg bg-[#0071CE] flex items-center justify-center">
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#FFC220"><path d="M12 2l1.5 5.5L12 9l-1.5-1.5L12 2zM12 22l-1.5-5.5L12 15l1.5 1.5L12 22zM2 12l5.5 1.5L9 12l-1.5-1.5L2 12zM22 12l-5.5-1.5L15 12l1.5 1.5L22 12zM5.6 5.6l5.5 1.5.4.4-1.5 1.5-.4-.4L5.6 5.6zM18.4 18.4l-5.5-1.5-.4-.4 1.5-1.5.4.4 4 3z"/></svg>
-        </div>
-      );
-    case "etsy":
-      return (
-        <div className="w-12 h-12 rounded-lg bg-[#F1641E] flex items-center justify-center">
-          <span className="text-white font-bold text-lg">Etsy</span>
-        </div>
-      );
-  }
+  const config: Record<Marketplace, { bg: string; text: string; label: string }> = {
+    amazon: { bg: "#232F3E", text: "#FF9900", label: "A" },
+    shopify: { bg: "#95BF47", text: "#FFFFFF", label: "S" },
+    walmart: { bg: "#0071CE", text: "#FFC220", label: "W" },
+    etsy: { bg: "#F1641E", text: "#FFFFFF", label: "E" },
+  };
+  const c = config[marketplace];
+  return (
+    <div
+      className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0"
+      style={{ backgroundColor: c.bg }}
+    >
+      <span className="font-bold text-xl" style={{ color: c.text }}>{c.label}</span>
+    </div>
+  );
 }
 
 interface Connection {
