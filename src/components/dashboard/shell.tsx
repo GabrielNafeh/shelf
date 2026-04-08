@@ -22,6 +22,15 @@ import {
   Swords,
   Search,
   Users,
+  Gauge,
+  Bell,
+  Send,
+  FlaskConical,
+  Microscope,
+  MessageSquare,
+  Package,
+  Megaphone,
+  DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -36,27 +45,46 @@ interface DashboardUser {
 
 const NAV_SECTIONS = [
   {
-    label: "Generate",
+    label: "Command Center",
     items: [
-      { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+      { href: "/dashboard", label: "Sales Dashboard", icon: LayoutDashboard },
+      { href: "/dashboard/shelf-score", label: "Shelf Score", icon: Gauge },
+      { href: "/dashboard/alerts", label: "Alerts", icon: Bell },
+    ],
+  },
+  {
+    label: "Create & Publish",
+    items: [
       { href: "/dashboard/generate", label: "Generate Listing", icon: PenTool },
       { href: "/dashboard/bulk", label: "Bulk Upload", icon: Upload },
-      { href: "/dashboard/brand-voice", label: "Brand Voice", icon: Mic2 },
+      { href: "/dashboard/publish", label: "Publish", icon: Send },
+      { href: "/dashboard/ab-tests", label: "A/B Testing", icon: FlaskConical },
     ],
   },
   {
     label: "Intelligence",
     items: [
-      { href: "/dashboard/connections", label: "Connections", icon: Link2 },
       { href: "/dashboard/health", label: "Listing Health", icon: HeartPulse },
-      { href: "/dashboard/brand-dna", label: "Brand DNA", icon: Dna },
-      { href: "/dashboard/competitors", label: "Competitors", icon: Swords },
       { href: "/dashboard/keywords", label: "Keywords", icon: Search },
+      { href: "/dashboard/competitors", label: "Competitors", icon: Swords },
+      { href: "/dashboard/research", label: "Product Research", icon: Microscope },
+      { href: "/dashboard/reviews", label: "Reviews", icon: MessageSquare },
     ],
   },
   {
-    label: "Settings",
+    label: "Operations",
     items: [
+      { href: "/dashboard/inventory", label: "Inventory", icon: Package },
+      { href: "/dashboard/ads", label: "Ad Manager", icon: Megaphone },
+      { href: "/dashboard/pricing", label: "Pricing", icon: DollarSign },
+    ],
+  },
+  {
+    label: "Brand & Settings",
+    items: [
+      { href: "/dashboard/brand-voice", label: "Brand Voice", icon: Mic2 },
+      { href: "/dashboard/brand-dna", label: "Brand DNA", icon: Dna },
+      { href: "/dashboard/connections", label: "Connections", icon: Link2 },
       { href: "/dashboard/team", label: "Team", icon: Users },
       { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
       { href: "/dashboard/settings", label: "Settings", icon: Settings },

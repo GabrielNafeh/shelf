@@ -1,164 +1,216 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { PenTool, Upload, FileText, TrendingUp, Clock, ArrowRight } from "lucide-react";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { ScoreGauge } from "@/components/dashboard/score-gauge";
+import { AlertBadge } from "@/components/dashboard/alert-badge";
+import { RevenueChart } from "@/components/dashboard/charts/revenue-chart";
+import { MarketplaceChart } from "@/components/dashboard/charts/marketplace-chart";
+import { generateMockSalesSummary, generateMockAlerts, generateMockShelfScore } from "@/lib/marketplace/mock-sales-data";
+import {
+  DollarSign,
+  ShoppingCart,
+  Package,
+  TrendingUp,
+  ArrowRight,
+  ChevronRight,
+  Bell,
+} from "lucide-react";
+import type { AlertSeverity } from "@/lib/types";
 
-export default async function DashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+const summary = generateMockSalesSummary();
+const alerts = generateMockAlerts();
+const shelfScore = generateMockShelfScore();
 
-  const { data: recentListings } = await supabase
-    .from("listings")
-    .select("id, product_name, status, created_at")
-    .eq("user_id", user!.id)
-    .order("created_at", { ascending: false })
-    .limit(5);
+const ALERT_ICONS: Record<string, string> = {
+  bsr_drop: "📉",
+  price_change: "💰",
+  stock_low: "📦",
+  review_negative: "⭐",
+  score_change: "📊",
+};
 
-  const { count: totalListings } = await supabase
-    .from("listings")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", user!.id);
-
-  const { count: totalBulkJobs } = await supabase
-    .from("bulk_jobs")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", user!.id);
+export default function SalesDashboard() {
+  const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d">("30d");
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Welcome back. Here&apos;s your listing activity.
-        </p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#111827]">Sales Dashboard</h1>
+          <p className="text-[#6B7280] mt-0.5">Your e-commerce command center</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {(["7d", "30d", "90d"] as const).map((range) => (
+            <button
+              key={range}
+              onClick={() => setTimeRange(range)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                timeRange === range
+                  ? "bg-[#22C55E] text-white"
+                  : "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]"
+              }`}
+            >
+              {range === "7d" ? "7 Days" : range === "30d" ? "30 Days" : "90 Days"}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <Link href="/dashboard/generate">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardContent className="pt-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg gradient-bg flex items-center justify-center shrink-0">
-                <PenTool className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Generate a Listing</h3>
-                <p className="text-sm text-muted-foreground">
-                  Create an optimized listing for a single product
-                </p>
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground ml-auto" />
-            </CardContent>
-          </Card>
+      {/* Top Row: Shelf Score + KPIs */}
+      <div className="grid grid-cols-12 gap-4">
+        {/* Shelf Score */}
+        <Link href="/dashboard/shelf-score" className="col-span-12 md:col-span-3 rounded-xl border border-[#E5E7EB] bg-white p-5 flex flex-col items-center justify-center hover:shadow-md transition-shadow group">
+          <ScoreGauge score={shelfScore.overallScore} size={120} sublabel={`Benchmark: ${shelfScore.categoryBenchmark}`} />
+          <span className="text-xs text-[#22C55E] font-medium mt-2 flex items-center gap-1 group-hover:underline">
+            View details <ChevronRight className="w-3 h-3" />
+          </span>
         </Link>
-        <Link href="/dashboard/bulk">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardContent className="pt-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-violet-600 flex items-center justify-center shrink-0">
-                <Upload className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Bulk Upload</h3>
-                <p className="text-sm text-muted-foreground">
-                  Upload a CSV to optimize hundreds of listings at once
-                </p>
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground ml-auto" />
-            </CardContent>
-          </Card>
-        </Link>
+
+        {/* KPI Cards */}
+        <div className="col-span-12 md:col-span-9 grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard
+            label="Revenue"
+            value={`$${summary.totalRevenue.toLocaleString()}`}
+            icon={DollarSign}
+            trend={{ value: 12.5, label: "vs last period" }}
+          />
+          <StatCard
+            label="Orders"
+            value={summary.totalOrders.toLocaleString()}
+            icon={ShoppingCart}
+            trend={{ value: 8.3, label: "vs last period" }}
+          />
+          <StatCard
+            label="Units Sold"
+            value={summary.totalUnits.toLocaleString()}
+            icon={Package}
+            trend={{ value: 5.7, label: "vs last period" }}
+          />
+          <StatCard
+            label="Profit Margin"
+            value={`${summary.profitMargin}%`}
+            icon={TrendingUp}
+            trend={{ value: 2.1, label: "vs last period" }}
+          />
+        </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Listings
-            </CardTitle>
-            <FileText className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalListings || 0}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Bulk Jobs
-            </CardTitle>
-            <Upload className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalBulkJobs || 0}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Avg. SEO Score
-            </CardTitle>
-            <TrendingUp className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-          </CardContent>
-        </Card>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Revenue Trend */}
+        <div className="lg:col-span-2 rounded-xl border border-[#E5E7EB] bg-white p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-[#111827]">Revenue Trend</h3>
+            <span className="text-xs text-[#9CA3AF]">Last 30 days</span>
+          </div>
+          <RevenueChart data={summary.revenueByDay} />
+        </div>
+
+        {/* Revenue by Marketplace */}
+        <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-[#111827]">By Marketplace</h3>
+          </div>
+          <MarketplaceChart data={summary.revenueByMarketplace} />
+        </div>
       </div>
 
-      {/* Recent Listings */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Listings</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!recentListings || recentListings.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">No listings yet</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Generate your first AI-optimized product listing
-              </p>
-              <Link href="/dashboard/generate">
-                <Button className="gradient-bg border-0">
-                  <PenTool className="w-4 h-4" />
-                  Generate Your First Listing
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {recentListings.map((listing) => (
-                <Link
-                  key={listing.id}
-                  href={`/dashboard/listings/${listing.id}`}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">{listing.product_name}</span>
+      {/* Bottom Row: Top Products + Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Top Products */}
+        <div className="lg:col-span-2 rounded-xl border border-[#E5E7EB] bg-white">
+          <div className="flex items-center justify-between p-5 pb-0">
+            <h3 className="font-semibold text-[#111827]">Top Products</h3>
+            <span className="text-xs text-[#9CA3AF]">By revenue</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[#F3F4F6]">
+                  <th className="text-left p-4 font-medium text-[#6B7280]">Product</th>
+                  <th className="text-right p-4 font-medium text-[#6B7280]">Revenue</th>
+                  <th className="text-right p-4 font-medium text-[#6B7280]">Units</th>
+                  <th className="text-right p-4 font-medium text-[#6B7280]">Profit</th>
+                  <th className="text-center p-4 font-medium text-[#6B7280]">Channel</th>
+                </tr>
+              </thead>
+              <tbody>
+                {summary.topProducts.map((product, i) => (
+                  <tr key={i} className="border-b border-[#F3F4F6] last:border-0 hover:bg-[#F9FAFB] transition-colors">
+                    <td className="p-4 font-medium text-[#111827]">{product.name}</td>
+                    <td className="p-4 text-right text-[#111827]">${product.revenue.toLocaleString()}</td>
+                    <td className="p-4 text-right text-[#6B7280]">{product.units.toLocaleString()}</td>
+                    <td className="p-4 text-right text-[#22C55E] font-medium">${product.profit.toLocaleString()}</td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#6B7280] capitalize">
+                        {product.marketplace}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Alerts */}
+        <div className="rounded-xl border border-[#E5E7EB] bg-white">
+          <div className="flex items-center justify-between p-5 pb-3">
+            <h3 className="font-semibold text-[#111827] flex items-center gap-2">
+              <Bell className="w-4 h-4" />
+              Alerts
+            </h3>
+            <Link href="/dashboard/alerts" className="text-xs text-[#22C55E] font-medium hover:underline flex items-center gap-1">
+              View all <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="divide-y divide-[#F3F4F6]">
+            {alerts.slice(0, 4).map((alert) => (
+              <div
+                key={alert.id}
+                className={`px-5 py-3 flex items-start gap-3 hover:bg-[#F9FAFB] transition-colors ${
+                  alert.isRead ? "opacity-60" : ""
+                }`}
+              >
+                <span className="text-lg mt-0.5">{ALERT_ICONS[alert.type] || "🔔"}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className="text-sm font-medium text-[#111827] truncate">{alert.title}</p>
+                    <AlertBadge severity={alert.severity as AlertSeverity} />
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Badge
-                      variant={listing.status === "complete" ? "success" : "secondary"}
-                    >
-                      {listing.status}
-                    </Badge>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="w-3 h-3" />
-                      {new Date(listing.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  <p className="text-xs text-[#6B7280] line-clamp-2">{alert.message}</p>
+                  <p className="text-xs text-[#9CA3AF] mt-1">
+                    {new Date(alert.createdAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* P&L Summary */}
+      <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
+        <h3 className="font-semibold text-[#111827] mb-4">Profit & Loss Summary</h3>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          {[
+            { label: "Gross Revenue", value: `$${summary.totalRevenue.toLocaleString()}`, color: "text-[#111827]" },
+            { label: "Marketplace Fees", value: `-$${Math.round(summary.totalRevenue * 0.15).toLocaleString()}`, color: "text-[#EF4444]" },
+            { label: "Ad Spend", value: `-$${Math.round(summary.totalRevenue * 0.12).toLocaleString()}`, color: "text-[#EF4444]" },
+            { label: "COGS", value: `-$${Math.round(summary.totalRevenue * 0.28).toLocaleString()}`, color: "text-[#EF4444]" },
+            { label: "Net Profit", value: `$${summary.totalProfit.toLocaleString()}`, color: "text-[#22C55E] font-bold" },
+            { label: "Margin", value: `${summary.profitMargin}%`, color: "text-[#22C55E] font-bold" },
+          ].map((item) => (
+            <div key={item.label} className="text-center">
+              <p className="text-xs text-[#6B7280] mb-1">{item.label}</p>
+              <p className={`text-lg font-semibold ${item.color}`}>{item.value}</p>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

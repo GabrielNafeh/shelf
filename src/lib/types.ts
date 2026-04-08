@@ -273,3 +273,331 @@ export const MARKETPLACE_CONFIG: Record<Marketplace, { name: string; icon: strin
     descriptionMaxLength: 3000,
   },
 };
+
+// ============================================================
+// Shelf 3.0 Types
+// ============================================================
+
+// Union types
+export type AlertType = "bsr_drop" | "price_change" | "stock_low" | "review_negative" | "score_change";
+export type AlertSeverity = "info" | "warning" | "critical";
+export type PublishStatus = "draft" | "queued" | "publishing" | "live" | "error" | "reverted";
+export type CampaignType = "sponsored_products" | "sponsored_brands" | "sponsored_display";
+export type CampaignStatus = "draft" | "suggested" | "active" | "paused" | "ended";
+export type BidStrategy = "dynamic_down" | "dynamic_up_down" | "fixed";
+export type FulfillmentType = "fba" | "fbm" | "merchant" | "wfs";
+export type InventoryAlertType = "low_stock" | "out_of_stock" | "overstock" | "reorder_now";
+export type ReviewSentiment = "positive" | "neutral" | "negative";
+export type CompetitionLevel = "low" | "medium" | "high" | "very_high";
+export type MarketTrend = "rising" | "stable" | "declining";
+export type PricingRuleType = "buy_box_offset" | "competitor_match" | "margin_floor" | "custom";
+export type PriceTrigger = "rule" | "manual" | "competitor";
+export type ABTestField = "title" | "bullets" | "description" | "images";
+export type ABTestStatus = "draft" | "running" | "paused" | "completed";
+export type ABVariant = "a" | "b";
+export type ReportType = "weekly" | "monthly" | "custom";
+export type ResponseType = "ai_suggested" | "manual" | "published";
+export type ResponseStatus = "draft" | "approved" | "published";
+
+// Shelf Score
+export interface ShelfScore {
+  id: string;
+  userId: string;
+  overallScore: number;
+  listingQualityScore: number;
+  pricingScore: number;
+  reviewScore: number;
+  adScore: number;
+  inventoryScore: number;
+  categoryBenchmark: number;
+  calculatedAt: string;
+}
+
+export interface ShelfScoreHistory {
+  id: string;
+  shelfScoreId: string;
+  overallScore: number;
+  capturedAt: string;
+}
+
+// Sales Dashboard
+export interface SalesData {
+  id: string;
+  userId: string;
+  connectionId?: string;
+  marketplace: Marketplace;
+  externalId?: string;
+  orderId: string;
+  revenue: number;
+  units: number;
+  fees: number;
+  adSpend: number;
+  cogs: number;
+  profit: number;
+  currency: string;
+  orderDate: string;
+  createdAt: string;
+}
+
+export interface ProductMetrics {
+  id: string;
+  userId: string;
+  listingId?: string;
+  marketplace: Marketplace;
+  bsr: number;
+  sessions: number;
+  conversionRate: number;
+  unitsSold30d: number;
+  revenue30d: number;
+  refundRate: number;
+  capturedAt: string;
+}
+
+export interface Alert {
+  id: string;
+  userId: string;
+  type: AlertType;
+  severity: AlertSeverity;
+  title: string;
+  message: string;
+  relatedEntityId?: string;
+  relatedEntityType?: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
+// One-Click Publish
+export interface PublishJob {
+  id: string;
+  userId: string;
+  listingOutputId?: string;
+  connectionId?: string;
+  marketplace: Marketplace;
+  status: PublishStatus;
+  externalListingId?: string;
+  publishedAt?: string;
+  errorMessage?: string;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Ad Manager
+export interface AdCampaign {
+  id: string;
+  userId: string;
+  connectionId?: string;
+  marketplace: Marketplace;
+  campaignName: string;
+  campaignType: CampaignType;
+  status: CampaignStatus;
+  dailyBudget: number;
+  bidStrategy: BidStrategy;
+  targetAcos: number;
+  listingId?: string;
+  keywords: { keyword: string; matchType: string; bid: number }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdMetric {
+  id: string;
+  campaignId: string;
+  date: string;
+  impressions: number;
+  clicks: number;
+  spend: number;
+  sales: number;
+  orders: number;
+  acos: number;
+  roas: number;
+  tacos: number;
+  cpc: number;
+  capturedAt: string;
+}
+
+// Inventory
+export interface InventoryItem {
+  id: string;
+  userId: string;
+  connectionId?: string;
+  listingId?: string;
+  marketplace: Marketplace;
+  sku: string;
+  productName?: string;
+  currentStock: number;
+  fulfillmentType: FulfillmentType;
+  dailyVelocity: number;
+  daysOfSupply: number;
+  reorderPoint: number;
+  reorderQty: number;
+  leadTimeDays: number;
+  unitCost: number;
+  lastSyncedAt?: string;
+  createdAt: string;
+}
+
+export interface InventoryAlert {
+  id: string;
+  userId: string;
+  inventoryId: string;
+  alertType: InventoryAlertType;
+  message: string;
+  isRead: boolean;
+  predictedStockoutDate?: string;
+  createdAt: string;
+}
+
+// Reviews
+export interface Review {
+  id: string;
+  userId: string;
+  connectionId?: string;
+  listingId?: string;
+  marketplace: Marketplace;
+  externalReviewId?: string;
+  reviewerName: string;
+  rating: number;
+  title: string;
+  body: string;
+  verifiedPurchase: boolean;
+  reviewDate: string;
+  sentiment: ReviewSentiment;
+  sentimentScore: number;
+  createdAt: string;
+}
+
+export interface ReviewResponse {
+  id: string;
+  reviewId: string;
+  responseType: ResponseType;
+  responseText: string;
+  status: ResponseStatus;
+  publishedAt?: string;
+  createdAt: string;
+}
+
+// Product Research
+export interface ResearchReport {
+  id: string;
+  userId: string;
+  query: string;
+  marketplace: Marketplace;
+  demandScore: number;
+  competitionLevel: CompetitionLevel;
+  trend: MarketTrend;
+  avgPrice: number;
+  avgReviews: number;
+  estimatedMonthlyRevenue: number;
+  marketGaps: string[];
+  supplierMargins: Record<string, number>;
+  aiAnalysis: string;
+  createdAt: string;
+}
+
+// Pricing
+export interface PricingRule {
+  id: string;
+  userId: string;
+  listingId?: string;
+  marketplace: Marketplace;
+  ruleType: PricingRuleType;
+  ruleConfig: Record<string, unknown>;
+  minPrice: number;
+  maxPrice: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PriceHistoryEntry {
+  id: string;
+  listingId: string;
+  oldPrice: number;
+  newPrice: number;
+  trigger: PriceTrigger;
+  ruleId?: string;
+  changedAt: string;
+}
+
+// A/B Testing
+export interface ABTest {
+  id: string;
+  userId: string;
+  listingId?: string;
+  marketplace: Marketplace;
+  testField: ABTestField;
+  variantA: string;
+  variantB: string;
+  status: ABTestStatus;
+  winner?: ABVariant;
+  startDate?: string;
+  endDate?: string;
+  significanceThreshold: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ABTestResult {
+  id: string;
+  testId: string;
+  variant: ABVariant;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+  revenue: number;
+  conversionRate: number;
+  capturedAt: string;
+}
+
+// Agency
+export interface AgencyClient {
+  id: string;
+  teamId: string;
+  clientName: string;
+  clientEmail?: string;
+  logoUrl?: string;
+  portalEnabled: boolean;
+  portalSlug?: string;
+  whiteLabelConfig: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AgencyReport {
+  id: string;
+  clientId: string;
+  reportType: ReportType;
+  reportData: Record<string, unknown>;
+  generatedAt: string;
+  sentAt?: string;
+  createdAt: string;
+}
+
+// Dashboard summary types
+export interface SalesSummary {
+  totalRevenue: number;
+  totalOrders: number;
+  totalUnits: number;
+  totalProfit: number;
+  profitMargin: number;
+  revenueByMarketplace: Record<Marketplace, number>;
+  revenueByDay: { date: string; revenue: number; orders: number }[];
+  topProducts: { name: string; revenue: number; units: number; profit: number; marketplace: Marketplace }[];
+}
+
+export interface InventorySummary {
+  totalSkus: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+  avgDaysOfSupply: number;
+  totalInventoryValue: number;
+}
+
+export interface ReviewSummary {
+  avgRating: number;
+  totalReviews: number;
+  sentimentBreakdown: { positive: number; neutral: number; negative: number };
+  starDistribution: Record<number, number>;
+  recentNegative: Review[];
+}
