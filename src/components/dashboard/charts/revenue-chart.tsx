@@ -39,7 +39,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
           />
           <Tooltip
             contentStyle={{ background: "white", border: "1px solid #E5E7EB", borderRadius: "8px", fontSize: 13 }}
-            formatter={(value: number) => [`$${value.toLocaleString()}`, "Revenue"]}
+            formatter={(value) => [`$${Number(value).toLocaleString()}`, "Revenue"]}
             labelStyle={{ color: "#6B7280", fontWeight: 500 }}
           />
           <Area type="monotone" dataKey="revenue" stroke="#22C55E" strokeWidth={2} fill="url(#revenueGradient)" />

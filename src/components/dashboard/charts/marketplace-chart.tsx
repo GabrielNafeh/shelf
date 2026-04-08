@@ -40,7 +40,7 @@ export function MarketplaceChart({ data }: MarketplaceChartProps) {
           />
           <Tooltip
             contentStyle={{ background: "white", border: "1px solid #E5E7EB", borderRadius: "8px", fontSize: 13 }}
-            formatter={(value: number) => [`$${value.toLocaleString()}`, "Revenue"]}
+            formatter={(value) => [`$${Number(value).toLocaleString()}`, "Revenue"]}
           />
           <Bar dataKey="revenue" radius={[6, 6, 0, 0]} barSize={48}>
             {chartData.map((entry) => (
