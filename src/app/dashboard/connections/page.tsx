@@ -19,7 +19,7 @@ import type { Marketplace } from "@/lib/types";
 function MarketplaceLogo({ marketplace }: { marketplace: Marketplace }) {
   const config: Record<Marketplace, { bg: string; text: string; label: string }> = {
     amazon: { bg: "#232F3E", text: "#FF9900", label: "A" },
-    shopify: { bg: "#95BF47", text: "#FFFFFF", label: "S" },
+    shopify: { bg: "#5E8E3E", text: "#FFFFFF", label: "S" },
     walmart: { bg: "#0071CE", text: "#FFC220", label: "W" },
     etsy: { bg: "#F1641E", text: "#FFFFFF", label: "E" },
   };
